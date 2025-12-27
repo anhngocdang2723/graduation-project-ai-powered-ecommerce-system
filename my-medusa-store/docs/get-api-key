@@ -1,0 +1,3 @@
+docker dompose up -d
+
+docker exec medusa_backend npx medusa exec ./src/scripts/get-api-key.ts

@@ -1,0 +1,200 @@
+import { defineRouteConfig } from "@medusajs/admin-sdk"
+import { ChatBubbleLeftRight } from "@medusajs/icons"
+import { Container, Heading, Text, Badge, Input } from "@medusajs/ui"
+import { useEffect, useState } from "react"
+
+// Types
+interface ChatSession {
+  id: number
+  session_id: string
+  customer_id: string | null
+  customer_email: string | null
+  status: string
+  message_count: number
+  last_message: string | null
+  last_intent: string | null
+  created_at: string | null
+  updated_at: string | null
+}
+
+interface ChatMessage {
+  id: number
+  session_id: string
+  role: string
+  content: string
+  intent: string | null
+  response_time_ms: number | null
+  created_at: string | null
+}
+
+const CHATBOT_API = "http://localhost:8000"
+
+const ChatbotPage = () => {
+  const [sessions, setSessions] = useState<ChatSession[]>([])
+  const [selectedSession, setSelectedSession] = useState<string | null>(null)
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState("")
+
+  // Fetch sessions
+  useEffect(() => {
+    fetchSessions()
+  }, [])
+
+  const fetchSessions = async () => {
+    try {
+      const response = await fetch(`${CHATBOT_API}/admin/sessions`)
+      if (response.ok) {
+        const data = await response.json()
+        setSessions(data.sessions || [])
+      }
+    } catch (error) {
+      console.error("Failed to fetch sessions:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchMessages = async (sessionId: string) => {
+    try {
+      const response = await fetch(`${CHATBOT_API}/admin/sessions/${sessionId}/messages`)
+      if (response.ok) {
+        const data = await response.json()
+        setMessages(data.messages || [])
+      }
+    } catch (error) {
+      console.error("Failed to fetch messages:", error)
+    }
+  }
+
+  const handleSessionClick = (sessionId: string) => {
+    setSelectedSession(sessionId)
+    fetchMessages(sessionId)
+  }
+
+  const filteredSessions = sessions.filter(
+    (s) =>
+      s.customer_email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.session_id.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return "N/A"
+    return new Date(dateStr).toLocaleString("vi-VN")
+  }
+
+  return (
+    <Container className="p-8">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <Heading level="h1" className="mb-2">Chatbot Management</Heading>
+          <Text className="text-ui-fg-subtle">Xem và tra cứu lịch sử chat với khách hàng</Text>
+        </div>
+        <Badge color="green">AI Online</Badge>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Sessions List */}
+        <div className="border rounded-lg p-4">
+          <div className="mb-4">
+            <Input
+              placeholder="Tìm theo email hoặc session ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          {loading ? (
+            <Text>Đang tải...</Text>
+          ) : filteredSessions.length === 0 ? (
+            <Text className="text-ui-fg-subtle">Chưa có phiên chat nào</Text>
+          ) : (
+            <div className="space-y-2 max-h-[500px] overflow-y-auto">
+              {filteredSessions.map((session) => (
+                <div
+                  key={session.id}
+                  onClick={() => handleSessionClick(session.session_id)}
+                  className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                    selectedSession === session.session_id
+                      ? "bg-ui-bg-base-pressed"
+                      : "bg-ui-bg-subtle hover:bg-ui-bg-subtle-hover"
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <Text className="font-medium">
+                        {session.customer_email || session.customer_id || "Khách vãng lai"}
+                      </Text>
+                      <div className="flex gap-2 items-center mt-1">
+                        <Text className="text-xs text-ui-fg-subtle">
+                          {session.message_count} tin nhắn
+                        </Text>
+                        {session.last_intent && (
+                          <Badge color="orange" className="text-[10px] px-1 py-0 h-4">
+                            {session.last_intent}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <Badge color={session.status === "active" ? "green" : "grey"}>
+                      {session.status}
+                    </Badge>
+                  </div>
+                  <Text className="text-xs text-ui-fg-muted mt-1">
+                    {formatDate(session.created_at)}
+                  </Text>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Messages Panel */}
+        <div className="border rounded-lg p-4">
+          <Heading level="h2" className="mb-4">Chi tiết cuộc hội thoại</Heading>
+
+          {!selectedSession ? (
+            <Text className="text-ui-fg-subtle">Chọn một phiên chat để xem chi tiết</Text>
+          ) : messages.length === 0 ? (
+            <Text className="text-ui-fg-subtle">Không có tin nhắn</Text>
+          ) : (
+            <div className="space-y-3 max-h-[500px] overflow-y-auto">
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`p-3 rounded-lg ${
+                    msg.role === "user"
+                      ? "bg-ui-bg-field ml-8"
+                      : "bg-ui-bg-subtle mr-8"
+                  }`}
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <Badge color={msg.role === "user" ? "blue" : "purple"}>
+                      {msg.role === "user" ? "Khách hàng" : "AI"}
+                    </Badge>
+                    {msg.intent && (
+                      <Badge color="grey" className="text-xs">
+                        {msg.intent}
+                      </Badge>
+                    )}
+                  </div>
+                  <Text className="text-sm whitespace-pre-wrap">{msg.content}</Text>
+                  <Text className="text-xs text-ui-fg-muted mt-1">
+                    {formatDate(msg.created_at)}
+                  </Text>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </Container>
+  )
+}
+
+export const config = defineRouteConfig({
+  label: "Chatbot",
+  icon: ChatBubbleLeftRight,
+})
+
+export default ChatbotPage

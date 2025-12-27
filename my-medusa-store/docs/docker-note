@@ -1,0 +1,78 @@
+🐳 Kiến trúc Docker trong Project
+        graduation-project/
+        ├── docker-compose.yml          # 👈 FILE CHÍNH - Điều phối tất cả services
+        ├── my-medusa-store/
+        │   ├── Dockerfile              # Build image cho Medusa Backend
+        │   └── docker-compose.yml      # ❌ KHÔNG DÙNG (file cũ, bỏ qua)
+        ├── chatbot-service/
+        │   └── Dockerfile              # Build image cho Chatbot
+        └── vercel-commerce/            # FE - Không cần Docker (deploy Vercel)
+
+
+📋 Luồng vận hành
+1. Khi chạy docker compose up -d --build
+┌─────────────────────────────────────────────────────────────────┐
+│                    docker-compose.yml                           │
+│                    (ở folder gốc)                               │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│   postgres    │    │    medusa     │    │   chatbot     │
+│  (image có    │    │  (build từ    │    │  (build từ    │
+│   sẵn)        │    │  Dockerfile)  │    │  Dockerfile)  │
+└───────────────┘    └───────────────┘    └───────────────┘
+        │                     │                     │
+        └─────────────────────┼─────────────────────┘
+                              ▼
+                    ┌───────────────┐
+                    │  app_network  │
+                    │ (mạng nội bộ) │
+                    └───────────────┘
+
+2. Dockerfile làm gì?
+        Service	Dockerfile	Công việc
+        Medusa	Dockerfile	Cài Node.js 20, npm install, copy code, chạy start.sh
+        Chatbot	Dockerfile	Cài Python 3.10, pip install, copy code, chạy uvicorn
+        Postgres/Redis	Không có	Dùng image có sẵn từ Docker Hub
+
+📋 Tóm tắt các lệnh dọn dẹp Docker
+        Lệnh	Tác dụng	Khi nào dùng
+        docker system df	Xem dung lượng đang dùng	Kiểm tra trước khi dọn
+        docker system prune -f	Dọn containers/networks không dùng	Hàng ngày
+        docker system prune -a -f	Dọn + xóa images không dùng	Khi cần giải phóng nhiều
+        docker system prune -a --volumes -f	Dọn tất cả + volumes	Khi cần dọn sạch hoàn toàn
+        docker builder prune -f	Chỉ dọn build cache	Sau khi build nhiều lần
+
+🎯 Khi nào dùng gì?
+        Thay đổi	Lệnh	Lý do
+        Sửa code (.ts, .py, .tsx...)	docker compose up -d	Code được mount volume, tự động cập nhật
+        Thêm package (npm install, pip install)	docker compose up -d --build	Cần cài lại dependencies trong image
+        Sửa Dockerfile	docker compose up -d --build	Cần build lại image
+        Sửa docker-compose.yml	docker compose up -d	Docker Compose tự detect thay đổi
+        Thêm file mới	docker compose up -d	File mới được mount tự động
+
+
+⚡ Workflow hàng ngày của bạn
+        # 1. Bắt đầu ngày làm việc - Khởi động services
+        docker compose up -d
+
+        # 2. Code, code, code... (không cần chạy lệnh gì)
+        #    - Sửa file .py, .ts, .tsx → Tự động reload
+
+        # 3. Nếu thêm package mới
+        docker compose up -d --build chatbot   # hoặc medusa
+
+        # 4. Cuối ngày - Tắt services (optional)
+        docker compose down
+
+        # 5. Dọn dẹp cuối tuần
+        docker system prune -f
+
+⚡ Khi nào BẮT BUỘC --build?
+        # Sau khi thêm vào requirements.txt hoặc package.json
+        docker compose up -d --build chatbot   # Chỉ build lại chatbot
+        docker compose up -d --build medusa    # Chỉ build lại medusa
+        # Sau khi sửa Dockerfile
+        docker compose up -d --build            # Build lại tất cả services

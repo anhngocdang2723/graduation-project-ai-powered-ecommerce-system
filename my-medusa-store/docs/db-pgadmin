@@ -1,0 +1,13 @@
+Cách sử dụng pgAdmin sau khi khởi động lại Docker:
+
+Chạy lại docker: npm run docker:up (hoặc docker compose up -d)
+  Truy cập trình duyệt: http://localhost:5050
+  Đăng nhập pgAdmin:
+  Email: admin@admin.com
+  Password: admin
+Kết nối tới Server Medusa:
+  Host name/address: postgres (tên service trong docker network)
+  Port: 5432
+  Username: postgres
+  Password: postgres
+

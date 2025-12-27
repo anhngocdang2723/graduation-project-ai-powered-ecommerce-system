@@ -1,0 +1,120 @@
+## ✅ **Tình huống 1 — Khách hỏi thông tin sản phẩm**
+**User:**
+> “Shop có iPhone 15 Pro màu trắng không?”
+
+*Luồng vận hành:**
+
+1. Người dùng nhập chat trên website (storefront Next.js).
+2. Request gửi tới **Python Chatbot Service API**.
+3. Agent NLP phân loại intent → `Product Inquiry`.
+4. Agent gọi Medusa REST API:
+
+   GET /store/products?title=iphone-15-pro&color=white
+
+5. Medusa backend query PostgreSQL → tìm product + variants.
+6. Medusa trả JSON cho chatbot.
+7. Chatbot sắp xếp dữ liệu, generate câu trả lời tự nhiên bằng LLM.
+8. Frontend hiển thị, kèm nút “Thêm vào giỏ”.
+
+👉 Không đụng DB trực tiếp, an toàn, đúng business logic Medusa.
+
+---
+
+## ✅ **Tình huống 2 — Khách muốn đặt hàng**
+**User:**
+
+> “Đặt cho anh 1 áo hoodie size L màu đen nha.”
+
+**Luồng vận hành:**
+
+1. Intent detection → `Create Order`.
+2. Agent `Entity Extractor` lấy product, quantity, size, color.
+3. Chatbot gọi API tạo cart:
+
+   POST /store/carts
+
+4. Thêm sản phẩm vào cart:
+
+   POST /store/carts/:id/line-items
+
+5. Thu thập thông tin giao hàng/thanh toán → tiếp tục gọi API checkout:
+
+   POST /store/orders
+
+6. Medusa lưu order vào PostgreSQL, giảm tồn kho.
+7. Chatbot trả lại mã đơn hàng.
+
+👉 Toàn bộ nghiệp vụ bán hàng do Medusa xử lý — chuẩn e-commerce.
+
+---
+
+## ✅ **Tình huống 3 — Tra cứu đơn hàng**
+
+**User:**
+
+> “Đơn #98732 của tôi giao đến đâu rồi?”
+
+**Luồng vận hành:**
+
+1. Intent → `Order Tracking`.
+2. Chatbot gọi:
+
+   GET /store/orders?display_id=98732&email=customer@gmail.com
+
+3. Medusa trả order status, shipping progress.
+4. Chatbot diễn giải:
+
+   > “Đơn đang trên đường, dự kiến giao 25/11.”
+
+---
+
+## ✅ **Tình huống 4 — Chatbot Admin quản lý**
+
+**Admin trong Dashboard:**
+
+> “Xem lịch sử hội thoại trong 7 ngày gần nhất.”
+
+**Luồng:**
+
+1. Admin UI (plugin trong Medusa Admin) gọi API của chatbot:
+
+   GET /chatbot/conversations?from=7d
+
+2. Python chatbot service query bảng `chatbot_logs` trong cùng PostgreSQL.
+3. Trả về danh sách, hiển thị trong dashboard.
+
+👉 Dữ liệu chatbot tách bảng, không đụng bảng core của Medusa.
+
+---
+
+## ✅ **Tình huống 5 — Fine-tune cấu hình chatbot**
+
+**Admin:**
+
+> “Tắt tính năng tự động tạo đơn hàng.”
+
+**Luồng:**
+
+1. Bấm nút trong Admin UI → gửi:
+
+   PATCH /chatbot/settings
+   { "auto_order": false }
+  
+2. Python service cập nhật cấu hình trong DB.
+3. Các agent khác đọc config trước khi thực thi.
+
+---
+
+## ✅ **Kiến trúc tổng thể (đồ án đẹp)**
+
+```
+Storefront (Next.js Commerce)
+        ↓
+Chat UI → Python Multi-Agent Service
+        ↓         ↑
+     Medusa REST API
+        ↓
+   Medusa Backend
+        ↓
+   PostgreSQL + Redis
+```
