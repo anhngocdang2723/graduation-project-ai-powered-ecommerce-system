@@ -1,0 +1,185 @@
+{
+  "exported_at": "2025-11-30T06:59:30.229022+00:00",
+  "tables": [
+    {
+      "schema": "chatbot",
+      "table": "messages",
+      "primary_keys": ["id"],
+      "foreign_keys": [
+        {"column": "session_id", "references_table": "sessions", "references_column": "session_id"}
+      ],
+      "columns": [
+        {"column": "id", "type": "varchar(255)", "nullable": false, "default": "auto-generated msg_xxx"},
+        {"column": "session_id", "type": "varchar(100)", "nullable": false},
+        {"column": "role", "type": "varchar(20)", "nullable": false, "note": "user | assistant | system"},
+        {"column": "content", "type": "text", "nullable": false},
+        {"column": "intent", "type": "varchar(50)", "nullable": true, "note": "product_inquiry | order_tracking | create_order | general"},
+        {"column": "tokens_used", "type": "integer", "nullable": true, "default": 0},
+        {"column": "response_time_ms", "type": "integer", "nullable": true},
+        {"column": "metadata", "type": "jsonb", "nullable": true, "default": "{}"},
+        {"column": "created_at", "type": "timestamptz", "nullable": true, "default": "now()"}
+      ]
+    },
+    {
+      "schema": "chatbot",
+      "table": "sessions",
+      "primary_keys": ["id"],
+      "foreign_keys": [
+        {"column": "customer_id", "references_table": "public.customer", "references_column": "id"}
+      ],
+      "columns": [
+        {"column": "id", "type": "varchar(255)", "nullable": false, "default": "auto-generated chat_xxx"},
+        {"column": "session_id", "type": "varchar(100)", "nullable": false, "unique": true},
+        {"column": "customer_id", "type": "varchar(255)", "nullable": true, "note": "FK to public.customer.id"},
+        {"column": "customer_email", "type": "varchar(255)", "nullable": true},
+        {"column": "customer_name", "type": "varchar(255)", "nullable": true},
+        {"column": "started_at", "type": "timestamptz", "nullable": true, "default": "now()"},
+        {"column": "ended_at", "type": "timestamptz", "nullable": true},
+        {"column": "status", "type": "varchar(20)", "nullable": true, "default": "active", "note": "active | ended | escalated"},
+        {"column": "metadata", "type": "jsonb", "nullable": true, "default": "{}"},
+        {"column": "created_at", "type": "timestamptz", "nullable": true, "default": "now()"},
+        {"column": "updated_at", "type": "timestamptz", "nullable": true, "default": "now()"}
+      ]
+    },
+    {
+      "schema": "chatbot",
+      "table": "settings",
+      "primary_keys": ["id"],
+      "foreign_keys": [],
+      "columns": [
+        {"column": "id", "type": "varchar(255)", "nullable": false, "default": "auto-generated setting_xxx"},
+        {"column": "key", "type": "varchar(100)", "nullable": false, "unique": true},
+        {"column": "value", "type": "jsonb", "nullable": false},
+        {"column": "description", "type": "text", "nullable": true},
+        {"column": "updated_by", "type": "varchar(255)", "nullable": true},
+        {"column": "updated_at", "type": "timestamptz", "nullable": true, "default": "now()"}
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "customer",
+      "primary_keys": ["id"],
+      "foreign_keys": [],
+      "columns": [
+        {"column": "id", "type": "text", "nullable": false},
+        {"column": "company_name", "type": "text", "nullable": true},
+        {"column": "first_name", "type": "text", "nullable": true},
+        {"column": "last_name", "type": "text", "nullable": true},
+        {"column": "email", "type": "text", "nullable": true},
+        {"column": "phone", "type": "text", "nullable": true},
+        {"column": "has_account", "type": "boolean", "nullable": false, "default": false},
+        {"column": "metadata", "type": "jsonb", "nullable": true},
+        {"column": "created_at", "type": "timestamptz", "nullable": false, "default": "now()"},
+        {"column": "updated_at", "type": "timestamptz", "nullable": false, "default": "now()"},
+        {"column": "deleted_at", "type": "timestamptz", "nullable": true},
+        {"column": "created_by", "type": "text", "nullable": true}
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "product",
+      "primary_keys": ["id"],
+      "foreign_keys": [
+        {"column": "collection_id", "references_table": "product_collection", "references_column": "id"},
+        {"column": "type_id", "references_table": "product_type", "references_column": "id"}
+      ],
+      "columns": [
+        {"column": "id", "type": "text", "nullable": false},
+        {"column": "title", "type": "text", "nullable": false},
+        {"column": "handle", "type": "text", "nullable": false, "note": "URL slug"},
+        {"column": "subtitle", "type": "text", "nullable": true},
+        {"column": "description", "type": "text", "nullable": true},
+        {"column": "is_giftcard", "type": "boolean", "nullable": false, "default": false},
+        {"column": "status", "type": "text", "nullable": false, "default": "draft", "note": "draft | published"},
+        {"column": "thumbnail", "type": "text", "nullable": true},
+        {"column": "collection_id", "type": "text", "nullable": true},
+        {"column": "type_id", "type": "text", "nullable": true},
+        {"column": "discountable", "type": "boolean", "nullable": false, "default": true},
+        {"column": "metadata", "type": "jsonb", "nullable": true}
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "product_variant",
+      "primary_keys": ["id"],
+      "foreign_keys": [
+        {"column": "product_id", "references_table": "product", "references_column": "id"}
+      ],
+      "columns": [
+        {"column": "id", "type": "text", "nullable": false},
+        {"column": "title", "type": "text", "nullable": false},
+        {"column": "sku", "type": "text", "nullable": true},
+        {"column": "barcode", "type": "text", "nullable": true},
+        {"column": "allow_backorder", "type": "boolean", "nullable": false, "default": false},
+        {"column": "manage_inventory", "type": "boolean", "nullable": false, "default": true},
+        {"column": "weight", "type": "integer", "nullable": true},
+        {"column": "product_id", "type": "text", "nullable": true},
+        {"column": "metadata", "type": "jsonb", "nullable": true},
+        {"column": "thumbnail", "type": "text", "nullable": true}
+      ],
+      "note": "Giá sản phẩm lưu ở bảng price (price_set module), không lưu trực tiếp trong variant"
+    },
+    {
+      "schema": "public",
+      "table": "order",
+      "primary_keys": ["id"],
+      "foreign_keys": [
+        {"column": "shipping_address_id", "references_table": "order_address", "references_column": "id"},
+        {"column": "billing_address_id", "references_table": "order_address", "references_column": "id"}
+      ],
+      "columns": [
+        {"column": "id", "type": "text", "nullable": false},
+        {"column": "region_id", "type": "text", "nullable": true},
+        {"column": "display_id", "type": "integer", "nullable": true, "note": "Mã đơn hàng hiển thị cho khách"},
+        {"column": "customer_id", "type": "text", "nullable": true},
+        {"column": "status", "type": "enum", "nullable": false, "default": "pending", "note": "pending | completed | canceled"},
+        {"column": "email", "type": "text", "nullable": true},
+        {"column": "currency_code", "type": "text", "nullable": false},
+        {"column": "metadata", "type": "jsonb", "nullable": true}
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "cart",
+      "primary_keys": ["id"],
+      "foreign_keys": [
+        {"column": "billing_address_id", "references_table": "cart_address", "references_column": "id"},
+        {"column": "shipping_address_id", "references_table": "cart_address", "references_column": "id"}
+      ],
+      "columns": [
+        {"column": "id", "type": "text", "nullable": false},
+        {"column": "region_id", "type": "text", "nullable": true},
+        {"column": "customer_id", "type": "text", "nullable": true},
+        {"column": "email", "type": "text", "nullable": true},
+        {"column": "currency_code", "type": "text", "nullable": false},
+        {"column": "metadata", "type": "jsonb", "nullable": true},
+        {"column": "completed_at", "type": "timestamptz", "nullable": true}
+      ]
+    },
+    {
+      "schema": "public",
+      "table": "region",
+      "primary_keys": ["id"],
+      "foreign_keys": [],
+      "columns": [
+        {"column": "id", "type": "text", "nullable": false},
+        {"column": "name", "type": "text", "nullable": false},
+        {"column": "currency_code", "type": "text", "nullable": false},
+        {"column": "metadata", "type": "jsonb", "nullable": true},
+        {"column": "automatic_taxes", "type": "boolean", "nullable": false, "default": true}
+      ]
+    }
+  ],
+  "relationships": {
+    "chatbot.sessions -> public.customer": "customer_id (nullable - khách vãng lai)",
+    "chatbot.messages -> chatbot.sessions": "session_id",
+    "public.product_variant -> public.product": "product_id",
+    "public.order -> public.customer": "customer_id",
+    "public.cart -> public.customer": "customer_id"
+  },
+  "notes": {
+    "id_format": "Medusa v2 dùng text ID, không dùng UUID chuẩn",
+    "price": "Giá sản phẩm qua Store API: /store/products trả về calculated_price trong variant",
+    "soft_delete": "Hầu hết bảng có deleted_at để soft delete"
+  }
+}

@@ -1,0 +1,241 @@
+nodes:
+  - id: root
+    label: "Menu"
+    type: group
+    children:
+      # --- GUEST CONTEXT ---
+      - id: guest_root
+        label: "Khách"
+        type: group
+        condition: is_guest
+        children:
+          - id: guest_auth
+            label: "👤 Tài khoản"
+            type: group
+            children:
+              - id: login
+                label: "🔑 Đăng nhập"
+                tag: "action:login"
+                type: link
+                value: "/login"
+              - id: register
+                label: "📝 Đăng ký"
+                tag: "action:register"
+                type: link
+                value: "/register"
+          
+          - id: guest_shopping
+            label: "🛍️ Mua sắm"
+            type: group
+            children:
+              - id: new_arrivals
+                label: "✨ Sản phẩm mới"
+                tag: "action:new_arrivals"
+                type: link
+                value: "/search?sort=created_at"
+              - id: promotions
+                label: "🔥 Khuyến mãi"
+                tag: "action:promotions"
+                type: link
+                value: "/collections/sale"
+
+          - id: guest_support
+            label: "💬 Hỗ trợ"
+            type: group
+            children:
+              - id: guest_tracking
+                label: "📦 Tra cứu đơn hàng"
+                tag: "action:guest_tracking"
+                type: link
+                value: "/order/status"
+              - id: shipping_policy
+                label: "🚚 Chính sách vận chuyển"
+                tag: "action:shipping_policy"
+                type: link
+                value: "/policy/shipping"
+              - id: return_policy
+                label: "🔄 Đổi trả & Hoàn tiền"
+                tag: "action:return_policy"
+                type: link
+                value: "/policy/returns"
+              - id: contact_us
+                label: "Liên hệ"
+                tag: "action:contact_us"
+                type: link
+                value: "/contact"
+
+      # --- CUSTOMER CONTEXT ---
+      - id: customer_root
+        label: "Khách hàng"
+        type: group
+        condition: is_customer
+        children:
+          - id: customer_orders
+            label: "📦 Đơn hàng"
+            tag: "scope:order"
+            type: group
+            children:
+              - id: list_orders
+                label: "📋 Đơn hàng của tôi"
+                tag: "action:order_list"
+                type: action
+              - id: track_order
+                label: "🚚 Tra cứu vận chuyển"
+                tag: "action:order_track"
+                type: action
+              - id: reorder
+                label: "🔄 Mua lại đơn cũ"
+                tag: "action:reorder"
+                type: action
+
+          - id: customer_profile
+            label: "👤 Tài khoản"
+            tag: "scope:profile"
+            type: group
+            children:
+              - id: view_profile
+                label: "⚙️ Thông tin cá nhân"
+                tag: "action:view_profile"
+                type: link
+                value: "/account"
+              - id: logout
+                label: "🚪 Đăng xuất"
+                tag: "action:logout"
+                type: action
+              - id: view_profile
+                label: "Thông tin cá nhân"
+                tag: "action:profile_view"
+                type: link
+                value: "/account"
+              - id: addresses
+                label: "Sổ địa chỉ"
+                tag: "action:addresses"
+                type: link
+                value: "/account/addresses"
+              - id: wishlist
+                label: "Sản phẩm yêu thích"
+                tag: "action:wishlist"
+                type: link
+                value: "/wishlist"
+              - id: logout
+                label: "Đăng xuất"
+                tag: "action:logout"
+                type: action
+
+          - id: customer_support
+            label: "Hỗ trợ"
+            type: group
+            children:
+              - id: chat_human
+                label: "Gặp nhân viên hỗ trợ"
+                tag: "action:chat_human"
+                type: action
+              - id: my_reviews
+                label: "Đánh giá của tôi"
+                tag: "action:my_reviews"
+                type: action
+
+      # --- STAFF CONTEXT ---
+      - id: staff_root
+        label: "Nhân viên"
+        type: group
+        condition: is_staff
+        children:
+          - id: staff_tools
+            label: "Công cụ kho"
+            tag: "scope:staff"
+            type: group
+            children:
+              - id: check_stock
+                label: "Kiểm tra tồn kho"
+                tag: "action:check_stock"
+                type: action
+              - id: check_price
+                label: "Tra cứu giá"
+                tag: "action:check_price"
+                type: action
+          
+          - id: staff_orders
+            label: "Quản lý đơn"
+            type: group
+            children:
+              - id: lookup_order_staff
+                label: "Tra cứu đơn hàng"
+                tag: "action:staff_lookup_order"
+                type: action
+              - id: customer_lookup
+                label: "Tra cứu khách hàng"
+                tag: "action:staff_customer_lookup"
+                type: action
+              - id: fulfillment
+                label: "Xử lý đơn hàng"
+                type: group
+                children:
+                  - id: update_status
+                    label: "Cập nhật trạng thái"
+                    tag: "action:update_order_status"
+                    type: action
+                  - id: print_label
+                    label: "In vận đơn"
+                    tag: "action:print_shipping_label"
+                    type: action
+
+      # --- MANAGER CONTEXT ---
+      - id: manager_root
+        label: "Quản lý"
+        type: group
+        condition: is_manager
+        children:
+          - id: manager_reports
+            label: "Báo cáo"
+            tag: "scope:manager"
+            type: group
+            children:
+              - id: sales_report
+                label: "Báo cáo doanh số"
+                tag: "action:sales_report"
+                type: action
+              - id: top_products
+                label: "Sản phẩm bán chạy"
+                tag: "action:top_products"
+                type: action
+              - id: customer_analytics
+                label: "Phân tích khách hàng"
+                tag: "action:customer_analytics"
+                type: action
+
+      # --- COMMON CONTEXT (Cart) ---
+      - id: cart
+        label: "Giỏ hàng"
+        tag: "scope:cart"
+        type: group
+        children:
+          - id: view_cart
+            label: "Xem giỏ hàng"
+            tag: "action:view_cart"
+            type: link
+            value: "/cart"
+          - id: checkout
+            label: "Thanh toán"
+            tag: "action:checkout"
+            type: link
+            value: "/checkout"
+            condition: is_not_guest # Example: Only show checkout if logged in (or maybe guest checkout is allowed, but let's test condition)
+
+intent_mapping:
+  create_order:
+    guest: guest_auth
+    customer: cart
+  order_tracking:
+    guest: guest_auth # Force login to track? Or maybe track by ID
+    customer: customer_orders
+  view_cart:
+    all: cart
+  profile_view:
+    customer: customer_profile
+    guest: guest_auth
+  staff_check_stock:
+    staff: staff_tools
+    manager: staff_tools
+  sales_report:
+    manager: manager_reports

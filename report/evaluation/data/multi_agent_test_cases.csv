@@ -1,0 +1,51 @@
+id,category,user_input,expected_language,expected_intent,expected_confidence,expected_agent,expected_tools,expected_has_products,expected_has_quick_replies
+1,GREETING,Xin chào shop,vi,greeting,0.9,sales,,False,True
+2,PRODUCT.SEARCH,Tôi muốn tìm balo JanSport màu đen,vi,product_inquiry,0.85,sales,product.search,True,True
+3,PRODUCT.SEARCH,Có balo cho học sinh không?,vi,product_inquiry,0.8,sales,product.search,True,True
+4,PRODUCT.DETAIL,Cho tôi xem chi tiết sản phẩm này,vi,product_detail,0.9,sales,product.detail,True,True
+5,PRODUCT.RECOMMEND,Gợi ý cho tôi vài sản phẩm hay,vi,product_recommend,0.85,sales,product.recommend,True,True
+6,CART.ADD,Thêm sản phẩm này vào giỏ hàng,vi,cart_add,0.9,sales,cart.add,False,True
+7,CART.VIEW,Xem giỏ hàng của tôi,vi,cart_view,0.95,sales,cart.view,False,True
+8,CART.REMOVE,Xóa sản phẩm này khỏi giỏ hàng,vi,cart_remove,0.9,sales,cart.remove,False,True
+9,ORDER.TRACK,Kiểm tra đơn hàng của tôi,vi,order_track,0.9,order,order.list,False,True
+10,ORDER.TRACK,Tình trạng đơn hàng #12345 như thế nào?,vi,order_track,0.95,order,order.detail,False,True
+11,ORDER.CANCEL,Tôi muốn hủy đơn hàng,vi,order_cancel,0.9,order,,False,False
+12,ORDER.RETURN,Làm sao để đổi trả sản phẩm?,vi,faq_return,0.85,sales,,False,True
+13,FAQ.SHIPPING,Phí vận chuyển là bao nhiêu?,vi,faq_shipping,0.9,sales,,False,True
+14,FAQ.PAYMENT,Shop nhận thanh toán COD không?,vi,faq_payment,0.9,sales,,False,True
+15,FAQ.PROMO,Có mã giảm giá nào không?,vi,faq_promo,0.85,sales,,False,True
+16,CHECKOUT,Thanh toán giỏ hàng,vi,checkout,0.95,sales,cart.checkout,False,False
+17,SUPPORT.ESCALATE,Tôi muốn nói chuyện với nhân viên,vi,support_escalate,0.9,sales,system.escalate,False,False
+18,THANK,Cảm ơn shop nhiều nhé,vi,thank_you,0.95,sales,,False,True
+19,GOODBYE,Tạm biệt,vi,goodbye,0.95,sales,,False,False
+20,EDGE_CASE_GIBBERISH,asdfghjkl qwerty,vi,general,0.3,sales,,False,True
+21,EDGE_CASE_EMPTY,,vi,unknown,0.0,sales,,False,True
+22,EDGE_CASE_LONG,Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào Xin chào,vi,greeting,0.9,sales,,False,True
+23,EDGE_CASE_EMOJI,🤖🎭🎪🎨,vi,general,0.2,sales,,False,True
+24,PRODUCT.SEARCH_ENGLISH,Looking for black backpack,en,product_inquiry,0.85,sales,product.search,True,True
+25,PRODUCT.SEARCH_PRICE,Balo dưới 500k có không?,vi,product_inquiry,0.8,sales,product.search,True,True
+26,PRODUCT.SEARCH_COLOR,Có balo màu xanh dương không?,vi,product_inquiry,0.85,sales,product.search,True,True
+27,PRODUCT.SEARCH_CATEGORY,Xem túi đeo chéo,vi,product_inquiry,0.85,sales,product.search,True,True
+28,CART.ADD_QUANTITY,Thêm 2 cái vào giỏ,vi,cart_add,0.9,sales,cart.add,False,True
+29,CART.UPDATE,Đổi số lượng thành 3,vi,cart_update,0.85,sales,cart.update,False,True
+30,ORDER.TRACK_MULTIPLE,Xem tất cả đơn hàng của tôi,vi,order_track,0.9,order,order.list,False,True
+31,ACCOUNT.LOGIN,Đăng nhập tài khoản,vi,account_login,0.95,sales,,False,False
+32,ACCOUNT.REGISTER,Tạo tài khoản mới,vi,account_register,0.9,sales,,False,False
+33,STAFF.CHECK_STOCK,Check kho balo JanSport,vi,staff_check_stock,0.85,staff,staff.check_stock,False,False
+34,STAFF.CUSTOMER_LOOKUP,Tìm thông tin khách hàng email@example.com,vi,staff_customer_lookup,0.9,staff,staff.customer_lookup,False,False
+35,MANAGER.REPORT_SALES,Báo cáo doanh thu tháng này,vi,manager_report_sales,0.9,manager,manager.report_sales,False,False
+36,MANAGER.REPORT_CHATBOT,Thống kê hiệu quả chatbot,vi,manager_report_chatbot,0.9,manager,manager.report_chatbot,False,False
+37,COMPLEX_PRODUCT_CART,Tìm balo đen rồi thêm vào giỏ luôn,vi,product_inquiry,0.8,sales,"product.search, cart.add",True,True
+38,COMPLEX_ORDER_INQUIRY,Đơn hàng #12345 đã giao chưa và tôi muốn đổi địa chỉ,vi,order_track,0.7,order,order.detail,False,True
+39,CONTEXT_AWARE_FOLLOWUP,Cái đầu tiên giá bao nhiêu?,vi,product_detail,0.75,sales,product.detail,True,True
+40,CONTEXT_AWARE_ADD_CART,Thêm vào giỏ,vi,cart_add,0.85,sales,cart.add,False,True
+41,MULTILINGUAL_VI_EN_MIX,Tìm backpack màu đen,vi,product_inquiry,0.85,sales,product.search,True,True
+42,PRODUCT.RECOMMEND_TRENDING,Sản phẩm hot trend là gì?,vi,product_recommend,0.9,sales,product.recommend,True,True
+43,PRODUCT.RECOMMEND_BESTSELLER,Sản phẩm nào bán chạy nhất?,vi,product_recommend,0.9,sales,product.recommend,True,True
+44,PRODUCT.SEARCH_BRAND,Tìm sản phẩm JanSport,vi,product_inquiry,0.9,sales,product.search,True,True
+45,FAQ.SHIPPING_TIME,Giao hàng mất bao lâu?,vi,faq_shipping,0.9,sales,,False,True
+46,FAQ.PAYMENT_METHODS,Có thể trả góp không?,vi,faq_payment,0.85,sales,,False,True
+47,FAQ.RETURN_WARRANTY,Bảo hành bao lâu?,vi,faq_return,0.85,sales,,False,True
+48,ERROR_HANDLING_GUEST_CART,Xem giỏ hàng,vi,cart_view,0.95,sales,,False,True
+49,ERROR_HANDLING_PRODUCT_NOT_FOUND,Tìm điện thoại iPhone 99,vi,product_inquiry,0.85,sales,product.search,False,True
+50,PERFORMANCE_STRESS_TEST,Tìm tất cả sản phẩm balo túi ví phụ kiện JanSport màu đen xanh đỏ vàng tím cam giá từ 100k đến 2 triệu cho học sinh sinh viên văn phòng du lịch thể thao,vi,product_inquiry,0.75,sales,product.search,True,True

@@ -1,0 +1,21 @@
+id,category,user_input,expected_intent_classifier_intent,expected_executor_tools_called,expected_response_generator_contains
+1,Greeting,Xin chào shop,general,,chào
+2,Greeting,Hello bạn,general,,chào
+3,Product Search,Tìm cho mình balo JanSport màu đen,product_inquiry,product.search,tìm thấy
+4,Product Search,Có balo nào giá dưới 500k không?,product_inquiry,product.search,tìm thấy
+5,Product Search,Shop có bán balo laptop không?,product_inquiry,product.search,tìm thấy
+6,Product Detail,Cho mình xem chi tiết cái đầu tiên,product_detail,product.detail,chi tiết
+7,Product Detail,Thông số kỹ thuật của nó thế nào?,product_detail,product.detail,thông số
+8,Product Recommend,Gợi ý cho mình vài mẫu hot đi,product_recommend,product.recommend,gợi ý
+9,Cart,Thêm cái này vào giỏ hàng giúp mình,cart_add,cart.add,đã thêm
+10,Cart,Mình muốn mua 2 cái,cart_add,cart.add,đã thêm
+11,Cart,Xem giỏ hàng của mình,cart_view,cart.view,giỏ hàng
+12,Order,Kiểm tra đơn hàng #123 giúp mình,order_tracking,order.track,trạng thái
+13,Order,Đơn hàng của tôi đang ở đâu?,order_tracking,order.track,vận chuyển
+14,FAQ,Shop có ship COD không?,faq_payment,,thanh toán
+15,FAQ,Phí ship về Hà Nội bao nhiêu?,faq_shipping,,phí ship
+16,FAQ,Chính sách đổi trả thế nào?,faq_return,,đổi trả
+17,Staff,Check tồn kho mã SP001,staff_check_stock,staff.check_stock,tồn kho
+18,Staff,Tìm thông tin khách hàng 0901234567,staff_customer_lookup,staff.customer_lookup,khách hàng
+19,Manager,Báo cáo doanh thu hôm nay,manager_report_sales,manager.report_sales,doanh thu
+20,Manager,Sản phẩm nào bán chạy nhất?,manager_top_products,manager.top_products,bán chạy

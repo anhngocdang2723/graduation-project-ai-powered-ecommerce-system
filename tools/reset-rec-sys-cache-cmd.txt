@@ -1,0 +1,6 @@
+### reset rec sys
+docker cp recommendation-service/database/reset_demo_data.sql medusa_postgres:/tmp/reset_demo_data.sql
+docker exec medusa_postgres psql -U postgres -d medusa-store -f /tmp/reset_demo_data.sql
+
+### prod mode
+npm run build

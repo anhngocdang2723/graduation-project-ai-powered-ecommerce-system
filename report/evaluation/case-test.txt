@@ -1,0 +1,7 @@
+tìm backpack
+tìm kiếm boys Shoes có giá dưới 3tr
+tìm backpack trên 500k dưới 1tr
+tìm Polo trên 500000 dưới 1000000 và thêm vào giỏ hàng nếu có
+Tìm cái Superbreak và thêm vào giỏ hàng
+Tôi muốn tra cứu đơn hàng vừa đặt
+
